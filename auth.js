@@ -9,9 +9,17 @@ const { google } = require("googleapis");
 const open = require("open");
 const dotenv = require("dotenv");
 
-// .env 파일 로드 (config/.env 경로에서)
-const envPath = path.join(__dirname, "config", ".env");
-dotenv.config({ path: envPath });
+// .env 파일 로드 (서브모듈로 사용 시에도 호환되도록)
+// 1. 환경 변수로 지정된 경로 사용
+// 2. auth.js와 같은 디렉토리의 config/.env 사용
+// 3. 현재 작업 디렉토리의 .env 사용 (기본 동작)
+const envPath = process.env.UTILS_AUTH_ENV_PATH || path.join(__dirname, "config", ".env");
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+} else {
+  // 기본 동작: 현재 작업 디렉토리에서 .env 찾기
+  dotenv.config();
+}
 
 // Google API 접근 범위 설정 (필요한 최소한의 범위만 포함)
 const SCOPES = [

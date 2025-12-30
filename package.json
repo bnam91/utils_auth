@@ -1,7 +1,7 @@
 {
-  "name": "api_key",
+  "name": "utils-auth",
   "version": "1.0.0",
-  "description": "",
+  "description": "Google OAuth2 인증 유틸리티 (JavaScript/Node.js 및 Python 지원)",
   "main": "auth.js",
   "scripts": {
     "test": "node read_sheet_test.js"
