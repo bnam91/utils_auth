@@ -1,4 +1,4 @@
-# V1.0.0 자동갱신
+# V1.0.1 자동갱신
 
 import os
 import sys
