@@ -1,13 +1,16 @@
 // V1.0.1 자동갱신 (Node.js)
 
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
-const http = require("http");
-const { URL } = require("url");
-const { google } = require("googleapis");
-const open = require("open");
-const dotenv = require("dotenv");
+import fs from "fs";
+import path from "path";
+import os from "os";
+import http from "http";
+import { URL, fileURLToPath } from "url";
+import { google } from "googleapis";
+import open from "open";
+import dotenv from "dotenv";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // .env 파일 로드 (서브모듈로 사용 시에도 호환되도록)
 // 1. 환경 변수로 지정된 경로 사용
@@ -172,10 +175,6 @@ async function getCredentials() {
   return client;
 }
 
-module.exports = {
-  SCOPES,
-  getCredentials,
-  getTokenPath,
-};
+export { SCOPES, getCredentials, getTokenPath };
 
 

@@ -1,12 +1,20 @@
-const { google } = require("googleapis");
+import { google } from "googleapis";
+import os from "os";
+import path from "path";
+import { pathToFileURL } from "url";
 
-// auth.js 모듈 가져오기 (같은 디렉토리)
-const auth = require("./auth.js");
+// auth.js 모듈 가져오기 (요청한 경로)
+const AUTH_PATH = "~Documents/github_cloud/module_auth/auth.js";
+const resolvedAuthPath = AUTH_PATH.replace(
+  /^~Documents/,
+  path.join(os.homedir(), "Documents"),
+);
+const { getCredentials } = await import(pathToFileURL(resolvedAuthPath).href);
 
 async function fetchFirstFiveRows(spreadsheetId, sheetName) {
-  const creds = await auth.getCredentials();
+  const creds = await getCredentials();
   const sheets = google.sheets({ version: "v4", auth: creds });
-  const rangeA1 = `${sheetName}!A1:Z5`;
+  const rangeA1 = `${sheetName}!A1:E5`;
 
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
@@ -37,7 +45,8 @@ async function main() {
   }
 }
 
-if (require.main === module) {
+const isDirectRun = import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isDirectRun) {
   main();
 }
 

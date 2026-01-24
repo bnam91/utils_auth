@@ -136,57 +136,64 @@ def get_credentials():
             # 새로 OAuth2 플로우를 통해 인증 (크롬 창이 열림)
             print("[인증 시작] 브라우저가 자동으로 열립니다. 인증을 완료해주세요.")
             
-            # 인증 이미지 자동 클릭 설정 (필요할 때만 임포트)
-            from modules import re_authModule
-            
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            auth_image_path_1 = os.path.join(script_dir, "src", "re-auth_img", "1_ID_shin_2.png")
-            auth_image_path_1 = os.path.normpath(auth_image_path_1)
-            auth_image_path_2 = os.path.join(script_dir, "src", "re-auth_img", "2_continue.png")
-            auth_image_path_2 = os.path.normpath(auth_image_path_2)
-            auth_image_path_3 = os.path.join(script_dir, "src", "re-auth_img", "3.check_all.png")
-            auth_image_path_3 = os.path.normpath(auth_image_path_3)
-            auth_image_path_4 = os.path.join(script_dir, "src", "re-auth_img", "4_continue_b.png")
-            auth_image_path_4 = os.path.normpath(auth_image_path_4)
-            
-            # 이미지 클릭을 백그라운드로 실행
-            import threading
-            def auto_click_auth_image():
-                try:
-                    # 첫 번째 이미지가 나타날 때까지 기다렸다가 클릭
-                    print("[이미지 클릭] 첫 번째 이미지를 기다립니다...")
-                    if re_authModule.locate_and_click_by_path(
-                        auth_image_path_1,
-                        max_retries=120,  # 최대 120초 대기
-                        retry_interval=1
-                    ):
-                        print("[이미지 클릭] 첫 번째 이미지 클릭 완료. 두 번째 이미지를 기다립니다...")
-                        # 두 번째 이미지가 나타날 때까지 기다렸다가 클릭
+            # 인증 이미지 자동 클릭 설정 (필요할 때만 임포트, 실패해도 계속 진행)
+            try:
+                from modules import re_authModule
+                
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                auth_image_path_1 = os.path.join(script_dir, "src", "re-auth_img", "1_ID_shin_2.png")
+                auth_image_path_1 = os.path.normpath(auth_image_path_1)
+                auth_image_path_2 = os.path.join(script_dir, "src", "re-auth_img", "2_continue.png")
+                auth_image_path_2 = os.path.normpath(auth_image_path_2)
+                auth_image_path_3 = os.path.join(script_dir, "src", "re-auth_img", "3.check_all.png")
+                auth_image_path_3 = os.path.normpath(auth_image_path_3)
+                auth_image_path_4 = os.path.join(script_dir, "src", "re-auth_img", "4_continue_b.png")
+                auth_image_path_4 = os.path.normpath(auth_image_path_4)
+                
+                # 이미지 클릭을 백그라운드로 실행
+                import threading
+                def auto_click_auth_image():
+                    try:
+                        # 첫 번째 이미지가 나타날 때까지 기다렸다가 클릭
+                        print("[이미지 클릭] 첫 번째 이미지를 기다립니다...")
                         if re_authModule.locate_and_click_by_path(
-                            auth_image_path_2,
+                            auth_image_path_1,
                             max_retries=120,  # 최대 120초 대기
                             retry_interval=1
                         ):
-                            print("[이미지 클릭] 두 번째 이미지 클릭 완료. 세 번째 이미지를 기다립니다...")
-                            # 세 번째 이미지가 나타날 때까지 기다렸다가 클릭
+                            print("[이미지 클릭] 첫 번째 이미지 클릭 완료. 두 번째 이미지를 기다립니다...")
+                            # 두 번째 이미지가 나타날 때까지 기다렸다가 클릭
                             if re_authModule.locate_and_click_by_path(
-                                auth_image_path_3,
+                                auth_image_path_2,
                                 max_retries=120,  # 최대 120초 대기
                                 retry_interval=1
                             ):
-                                print("[이미지 클릭] 세 번째 이미지 클릭 완료. 네 번째 이미지를 기다립니다...")
-                                # 네 번째 이미지가 나타날 때까지 기다렸다가 클릭
-                                re_authModule.locate_and_click_by_path(
-                                    auth_image_path_4,
+                                print("[이미지 클릭] 두 번째 이미지 클릭 완료. 세 번째 이미지를 기다립니다...")
+                                # 세 번째 이미지가 나타날 때까지 기다렸다가 클릭
+                                if re_authModule.locate_and_click_by_path(
+                                    auth_image_path_3,
                                     max_retries=120,  # 최대 120초 대기
                                     retry_interval=1
-                                )
-                except Exception as e:
-                    print(f"[이미지 클릭] 자동 클릭 중 오류 발생: {e}")
-            
-            # 백그라운드 스레드로 이미지 클릭 시작
-            click_thread = threading.Thread(target=auto_click_auth_image, daemon=True)
-            click_thread.start()
+                                ):
+                                    print("[이미지 클릭] 세 번째 이미지 클릭 완료. 네 번째 이미지를 기다립니다...")
+                                    # 네 번째 이미지가 나타날 때까지 기다렸다가 클릭
+                                    re_authModule.locate_and_click_by_path(
+                                        auth_image_path_4,
+                                        max_retries=120,  # 최대 120초 대기
+                                        retry_interval=1
+                                    )
+                    except Exception as e:
+                        print(f"[이미지 클릭] 자동 클릭 중 오류 발생: {e}")
+                
+                # 백그라운드 스레드로 이미지 클릭 시작
+                click_thread = threading.Thread(target=auto_click_auth_image, daemon=True)
+                click_thread.start()
+            except ImportError as e:
+                print(f"[경고] 자동 이미지 클릭 모듈을 로드할 수 없습니다: {e}")
+                print("[경고] 수동으로 인증을 완료해주세요.")
+            except Exception as e:
+                print(f"[경고] 자동 이미지 클릭 기능을 초기화할 수 없습니다: {e}")
+                print("[경고] 수동으로 인증을 완료해주세요.")
             
             flow = InstalledAppFlow.from_client_config(
                 {
